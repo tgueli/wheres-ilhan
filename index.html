@@ -77,34 +77,34 @@
 <body class="min-h-screen flex flex-col justify-between overflow-x-hidden">
 
   <!-- Header Section -->
-  <header class="bg-gradient-to-r from-red-600 via-purple-700 to-blue-600 p-4 shadow-xl border-b-4 border-black sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-4">
+  <header class="bg-gradient-to-r from-red-600 via-purple-700 to-blue-600 p-3 sm:p-4 shadow-xl border-b-4 border-black sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2 sm:gap-4">
       
       <!-- Title -->
       <div class="flex items-center space-x-3">
-        <h1 class="text-3xl sm:text-5xl font-comic text-yellow-300 tracking-wider drop-shadow-[0_3px_0_#000]">
+        <h1 class="text-2xl sm:text-5xl font-comic text-yellow-300 tracking-wider drop-shadow-[0_3px_0_#000]">
           WHERE'S ILHAN?
         </h1>
-        <span class="bg-black text-xs font-bold text-white px-2 py-1 rounded uppercase tracking-widest border border-yellow-400">
+        <span class="bg-black text-[10px] sm:text-xs font-bold text-white px-2 py-1 rounded uppercase tracking-widest border border-yellow-400">
           Somalia Edition
         </span>
       </div>
 
       <!-- Controls & Status -->
-      <div class="flex items-center space-x-3 sm:space-x-4">
+      <div class="flex items-center space-x-2 sm:space-x-4">
         <!-- Timer -->
-        <div class="bg-black/80 px-4 py-1.5 rounded-lg border-2 border-yellow-400 flex items-center space-x-2">
-          <i class="fa-solid fa-stopwatch text-yellow-400 text-lg"></i>
-          <span id="timer" class="font-mono text-xl sm:text-2xl text-yellow-300 font-bold">00:00.0</span>
+        <div class="bg-black/80 px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg border-2 border-yellow-400 flex items-center space-x-2">
+          <i class="fa-solid fa-stopwatch text-yellow-400 text-sm sm:text-lg"></i>
+          <span id="timer" class="font-mono text-lg sm:text-2xl text-yellow-300 font-bold">00:00.0</span>
         </div>
 
         <!-- Hint Button -->
-        <button id="hint-btn" onclick="toggleHint()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold px-3 py-1.5 rounded-lg border-2 border-black active:translate-y-0.5 transition shadow">
+        <button id="hint-btn" onclick="toggleHint()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold px-3 py-1.5 rounded-lg border-2 border-black active:translate-y-0.5 transition shadow text-xs sm:text-sm">
           <i class="fa-solid fa-lightbulb"></i> <span class="hidden sm:inline">HINT</span>
         </button>
 
         <!-- Show Answer -->
-        <button id="answer-btn" onclick="toggleAnswer()" class="bg-red-500 hover:bg-red-400 text-white font-extrabold px-3 py-1.5 rounded-lg border-2 border-black active:translate-y-0.5 transition shadow">
+        <button id="answer-btn" onclick="toggleAnswer()" class="bg-red-500 hover:bg-red-400 text-white font-extrabold px-3 py-1.5 rounded-lg border-2 border-black active:translate-y-0.5 transition shadow text-xs sm:text-sm">
           <i class="fa-solid fa-eye"></i> <span class="hidden sm:inline">ANSWER</span>
         </button>
       </div>
@@ -112,16 +112,16 @@
   </header>
 
   <!-- Reference Banner -->
-  <div class="bg-slate-800 border-b border-slate-700 py-3 px-4 text-center text-sm font-semibold text-slate-300">
-    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3">
+  <div class="bg-slate-800 border-b border-slate-700 py-2 px-3 text-center text-xs sm:text-sm font-semibold text-slate-300">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
       <div class="flex items-center space-x-2">
         <i class="fa-solid fa-bullseye text-yellow-400 text-base"></i>
         <span>Search the crowded Somalia market to find Ilhan!</span>
       </div>
       <div class="flex items-center space-x-2 bg-slate-900 border border-slate-600 px-3 py-1 rounded-full">
-        <span class="text-xs uppercase text-slate-400 font-bold">Target Preview:</span>
-        <img src="https://i.ibb.co/bVvrnYJ/Gemini-Generated-Image-dbg5ltdbg5ltdbg5.jpg" alt="Ilhan Omar Reference" class="w-8 h-8 rounded-full object-cover border border-yellow-400">
-        <span class="text-xs font-bold text-yellow-300">Floral Headscarf &amp; Blazer</span>
+        <span class="text-[10px] sm:text-xs uppercase text-slate-400 font-bold">Target Preview:</span>
+        <img src="https://i.ibb.co/bVvrnYJ/Gemini-Generated-Image-dbg5ltdbg5ltdbg5.jpg" alt="Ilhan Omar Reference" class="w-7 h-7 rounded-full object-cover border border-yellow-400">
+        <span class="text-[11px] sm:text-xs font-bold text-yellow-300">Floral Headscarf &amp; Blazer</span>
       </div>
     </div>
   </div>
@@ -143,21 +143,21 @@
       <div id="overlay" class="absolute inset-0 pointer-events-none"></div>
 
       <!-- Start Overlay Modal -->
-      <div id="start-overlay" class="absolute inset-0 bg-black/85 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6 text-center">
-        <h2 class="text-4xl sm:text-6xl font-comic text-yellow-300 mb-4 drop-shadow-[0_4px_0_#000]">
+      <div id="start-overlay" class="absolute inset-0 bg-black/85 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-4 sm:p-6 text-center overflow-y-auto max-h-full">
+        <h2 class="text-3xl sm:text-5xl font-comic text-yellow-300 mb-2 sm:mb-4 drop-shadow-[0_4px_0_#000]">
           CAN YOU FIND ILHAN?
         </h2>
-        <div class="bg-slate-900 border-2 border-yellow-400 p-3 rounded-xl mb-6 flex items-center space-x-3">
-          <img src="https://i.ibb.co/bVvrnYJ/Gemini-Generated-Image-dbg5ltdbg5ltdbg5.jpg" alt="Target Reference" class="w-16 h-16 rounded-full border-2 border-yellow-400 object-cover">
+        <div class="bg-slate-900/90 border-2 border-yellow-400 p-2.5 sm:p-3 rounded-xl mb-3 sm:mb-5 flex items-center space-x-3 max-w-xs sm:max-w-sm">
+          <img src="https://i.ibb.co/bVvrnYJ/Gemini-Generated-Image-dbg5ltdbg5ltdbg5.jpg" alt="Target Reference" class="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-yellow-400 object-cover flex-shrink-0">
           <div class="text-left">
-            <span class="text-xs uppercase text-slate-400 font-bold block">Your Target</span>
-            <span class="text-sm font-bold text-yellow-300">Ilhan (Floral Scarf &amp; Dark Blazer)</span>
+            <span class="text-[10px] sm:text-xs uppercase text-slate-400 font-bold block">Your Target</span>
+            <span class="text-xs sm:text-sm font-bold text-yellow-300">Ilhan (Floral Scarf &amp; Dark Blazer)</span>
           </div>
         </div>
-        <p class="text-slate-300 text-lg max-w-md mb-8">
+        <p class="text-slate-300 text-sm sm:text-lg max-w-md mb-4 sm:mb-6">
           She is hidden somewhere in the busy Mogadishu market scene. Click Start when you're ready to begin!
         </p>
-        <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-extrabold py-4 px-10 rounded-2xl border-4 border-black text-2xl sm:text-3xl shadow-2xl hover:scale-105 active:scale-95 transition duration-150">
+        <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-extrabold py-3 px-8 sm:py-4 sm:px-10 rounded-2xl border-4 border-black text-xl sm:text-3xl shadow-2xl hover:scale-105 active:scale-95 transition duration-150 flex-shrink-0">
           <i class="fa-solid fa-play mr-2"></i> START GAME
         </button>
       </div>
