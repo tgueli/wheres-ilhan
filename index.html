@@ -94,18 +94,18 @@
       <div class="flex items-center space-x-3 sm:space-x-4">
         <!-- Timer -->
         <div class="bg-black/80 px-4 py-1.5 rounded-lg border-2 border-yellow-400 flex items-center space-x-2">
-          <i class="fa-solid fa-stopwatch text-yellow-400 text-lg"></i>
+          <span class="text-yellow-400 text-lg">⏱</span>
           <span id="timer" class="font-mono text-xl sm:text-2xl text-yellow-300 font-bold">00:00.0</span>
         </div>
 
         <!-- Hint Button -->
         <button id="hint-btn" onclick="toggleHint()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold px-3 py-1.5 rounded-lg border-2 border-black active:translate-y-0.5 transition shadow">
-          <i class="fa-solid fa-lightbulb"></i> <span class="hidden sm:inline">HINT</span>
+          💡 <span class="hidden sm:inline">HINT</span>
         </button>
 
         <!-- Show Answer -->
         <button id="answer-btn" onclick="toggleAnswer()" class="bg-red-500 hover:bg-red-400 text-white font-extrabold px-3 py-1.5 rounded-lg border-2 border-black active:translate-y-0.5 transition shadow">
-          <i class="fa-solid fa-eye"></i> <span class="hidden sm:inline">ANSWER</span>
+          👁 <span class="hidden sm:inline">ANSWER</span>
         </button>
       </div>
     </div>
@@ -115,7 +115,7 @@
   <div class="bg-slate-800 border-b border-slate-700 py-3 px-4 text-center text-sm font-semibold text-slate-300">
     <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3">
       <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-bullseye text-yellow-400 text-base"></i>
+        <span class="text-yellow-400">🎯</span>
         <span>Search the crowded Somalia market to find Ilhan!</span>
       </div>
       <div class="flex items-center space-x-2 bg-slate-900 border border-slate-600 px-3 py-1 rounded-full">
@@ -140,10 +140,10 @@
       />
 
       <!-- Overlay Elements Layer -->
-      <div id="overlay" class="absolute inset-0 pointer-events-none"></div>
+      <div id="overlay" class="absolute inset-0 pointer-events-none z-10"></div>
 
       <!-- Start Overlay Modal -->
-      <div id="start-overlay" class="absolute inset-0 bg-black/85 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6 text-center">
+      <div id="start-overlay" class="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6 text-center">
         <h2 class="text-4xl sm:text-6xl font-comic text-yellow-300 mb-4 drop-shadow-[0_4px_0_#000]">
           CAN YOU FIND ILHAN?
         </h2>
@@ -157,8 +157,8 @@
         <p class="text-slate-300 text-lg max-w-md mb-8">
           She is hidden somewhere in the busy Mogadishu market scene. Click Start when you're ready to begin!
         </p>
-        <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-extrabold py-4 px-10 rounded-2xl border-4 border-black text-2xl sm:text-3xl shadow-2xl hover:scale-105 active:scale-95 transition duration-150">
-          <i class="fa-solid fa-play mr-2"></i> START GAME
+        <button id="start-btn" onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-extrabold py-4 px-10 rounded-2xl border-4 border-black text-2xl sm:text-3xl shadow-2xl hover:scale-105 active:scale-95 transition duration-150 cursor-pointer">
+          ▶ START GAME
         </button>
       </div>
     </div>
@@ -168,7 +168,7 @@
   <div id="win-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border-4 border-yellow-400 rounded-2xl max-w-md w-full p-6 text-center comic-border relative">
       <div class="text-yellow-400 text-6xl mb-2 animate-bounce">
-        <i class="fa-solid fa-trophy"></i>
+        🏆
       </div>
       <h2 class="text-4xl font-comic text-yellow-300 mb-2">YOU FOUND HER!</h2>
       <p class="text-slate-300 text-lg mb-4">You spotted Ilhan in the Somalia market scene!</p>
@@ -178,7 +178,7 @@
         <span id="final-time" class="font-mono text-3xl font-bold text-green-400">00:00.0</span>
       </div>
 
-      <button onclick="restartGame()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-extrabold py-3 px-6 rounded-xl border-2 border-black text-xl shadow-lg transition">
+      <button onclick="restartGame()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-extrabold py-3 px-6 rounded-xl border-2 border-black text-xl shadow-lg transition cursor-pointer">
         PLAY AGAIN
       </button>
     </div>
@@ -186,12 +186,19 @@
 
   <script>
     // Audio Synthesizer via Web Audio API
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let audioCtx = null;
 
-    function playSound(type) {
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
+    }
+
+    function playSound(type) {
+      if (!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.connect(gain);
@@ -235,12 +242,13 @@
     const startOverlay = document.getElementById('start-overlay');
 
     function startGame() {
-      startOverlay.classList.add('hidden');
+      initAudio();
+      startOverlay.style.display = 'none';
       isGameStarted = true;
       startTimer();
+      sendHeight();
     }
 
-    // Start Stopwatch
     function startTimer() {
       startTime = Date.now() - elapsedTime;
       timerInterval = setInterval(() => {
@@ -257,7 +265,7 @@
       clearInterval(timerInterval);
     }
 
-    // Handle Clicks
+    // Handle Clicks on Image
     img.addEventListener('click', (e) => {
       if (!isGameStarted || isFound) return;
 
@@ -265,11 +273,9 @@
       const clickX = ((e.clientX - rect.left) / rect.width) * 100;
       const clickY = ((e.clientY - rect.top) / rect.height) * 100;
 
-      // Distance formula to target
       const dist = Math.hypot(clickX - TARGET.x, clickY - TARGET.y);
 
       if (dist <= TARGET.radius) {
-        // HIT!
         isFound = true;
         stopTimer();
         playSound('hit');
@@ -279,25 +285,22 @@
           winModal.classList.remove('hidden');
         }, 600);
       } else {
-        // MISS!
         playSound('miss');
-        elapsedTime += 3000; // 3 sec penalty
+        elapsedTime += 3000;
         renderMissMarker(clickX, clickY);
       }
     });
 
-    // Render Miss Ring / Icon
     function renderMissMarker(x, y) {
       const miss = document.createElement('div');
       miss.className = 'miss-marker';
       miss.style.left = `${x}%`;
       miss.style.top = `${y}%`;
-      miss.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      miss.innerHTML = '✖';
       overlay.appendChild(miss);
       setTimeout(() => miss.remove(), 800);
     }
 
-    // Render Win Marker
     function renderFoundMarker() {
       const found = document.createElement('div');
       found.className = 'found-ring';
@@ -308,14 +311,12 @@
       overlay.appendChild(found);
     }
 
-    // Toggle Answer Outline
     function toggleAnswer() {
       if (!isGameStarted) return;
       showAnswer = !showAnswer;
       updateOverlays();
     }
 
-    // Toggle Hint Quadrant Ring
     function toggleHint() {
       if (!isGameStarted) return;
       showHint = !showHint;
@@ -348,7 +349,6 @@
       }
     }
 
-    // Restart Game
     function restartGame() {
       isFound = false;
       showAnswer = false;
@@ -361,27 +361,21 @@
     }
   </script>
   <script>
-  function sendHeight() {
-    var height = Math.max(
-      document.body.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.clientHeight,
-      document.documentElement.scrollHeight,
-      document.documentElement.offsetHeight
-    );
-    if (height > 0) {
-      window.parent.postMessage({ type: 'ors-resize', frameHeight: height }, '*');
+    function sendHeight() {
+      var height = document.documentElement.scrollHeight || document.body.scrollHeight;
+      if (height > 0) {
+        window.parent.postMessage({ type: 'ors-resize', frameHeight: height }, '*');
+      }
     }
-  }
 
-  window.addEventListener('load', sendHeight);
-  window.addEventListener('resize', sendHeight);
-  document.addEventListener('DOMContentLoaded', sendHeight);
+    window.addEventListener('load', sendHeight);
+    window.addEventListener('resize', sendHeight);
+    document.addEventListener('DOMContentLoaded', sendHeight);
 
-  if (window.MutationObserver) {
-    var observer = new MutationObserver(sendHeight);
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-  }
-</script>
+    if (window.MutationObserver) {
+      var observer = new MutationObserver(sendHeight);
+      observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    }
+  </script>
 </body>
 </html>
