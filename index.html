@@ -362,7 +362,6 @@
   </script>
   <script>
   function sendHeight() {
-    // Measure exact content height
     var height = Math.max(
       document.body.scrollHeight,
       document.body.offsetHeight,
@@ -375,12 +374,10 @@
     }
   }
 
-  // Trigger height send on all lifecycle events
   window.addEventListener('load', sendHeight);
   window.addEventListener('resize', sendHeight);
   document.addEventListener('DOMContentLoaded', sendHeight);
 
-  // Continuously observe changes inside the body
   if (window.MutationObserver) {
     var observer = new MutationObserver(sendHeight);
     observer.observe(document.body, { childList: true, subtree: true, attributes: true });
