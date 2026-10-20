@@ -142,26 +142,27 @@
       <!-- Overlay Elements Layer -->
       <div id="overlay" class="absolute inset-0 pointer-events-none"></div>
 
-      <!-- Start Overlay Modal -->
-      <div id="start-overlay" class="absolute inset-0 bg-black/85 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-4 sm:p-6 text-center overflow-y-auto max-h-full">
-        <h2 class="text-3xl sm:text-5xl font-comic text-yellow-300 mb-2 sm:mb-4 drop-shadow-[0_4px_0_#000]">
-          CAN YOU FIND ILHAN?
-        </h2>
-        <div class="bg-slate-900/90 border-2 border-yellow-400 p-2.5 sm:p-3 rounded-xl mb-3 sm:mb-5 flex items-center space-x-3 max-w-xs sm:max-w-sm">
-          <img src="https://i.ibb.co/bVvrnYJ/Gemini-Generated-Image-dbg5ltdbg5ltdbg5.jpg" alt="Target Reference" class="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-yellow-400 object-cover flex-shrink-0">
-          <div class="text-left">
-            <span class="text-[10px] sm:text-xs uppercase text-slate-400 font-bold block">Your Target</span>
-            <span class="text-xs sm:text-sm font-bold text-yellow-300">Ilhan (Floral Scarf &amp; Dark Blazer)</span>
-          </div>
-        </div>
-        <p class="text-slate-300 text-sm sm:text-lg max-w-md mb-4 sm:mb-6">
-          She is hidden somewhere in the busy Mogadishu market scene. Click Start when you're ready to begin!
-        </p>
-        <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-extrabold py-3 px-8 sm:py-4 sm:px-10 rounded-2xl border-4 border-black text-xl sm:text-3xl shadow-2xl hover:scale-105 active:scale-95 transition duration-150 flex-shrink-0">
-          <i class="fa-solid fa-play mr-2"></i> START GAME
-        </button>
+  <!-- Start Overlay Modal -->
+<div id="start-overlay" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex flex-col p-4 sm:p-6 text-center overflow-y-auto">
+  <div class="m-auto flex flex-col items-center">
+    <h2 class="text-3xl sm:text-5xl font-comic text-yellow-300 mb-2 sm:mb-4 drop-shadow-[0_4px_0_#000]">
+      CAN YOU FIND ILHAN?
+    </h2>
+    <div class="bg-slate-900/90 border-2 border-yellow-400 p-2.5 sm:p-3 rounded-xl mb-3 sm:mb-5 flex items-center space-x-3 max-w-xs sm:max-w-sm">
+      <img src="https://i.ibb.co/bVvrnYJ/Gemini-Generated-Image-dbg5ltdbg5ltdbg5.jpg" alt="Target Reference" class="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-yellow-400 object-cover flex-shrink-0">
+      <div class="text-left">
+        <span class="text-[10px] sm:text-xs uppercase text-slate-400 font-bold block">Your Target</span>
+        <span class="text-xs sm:text-sm font-bold text-yellow-300">Ilhan (Floral Scarf &amp; Dark Blazer)</span>
       </div>
     </div>
+    <p class="text-slate-300 text-sm sm:text-lg max-w-md mb-4 sm:mb-6">
+      She is hidden somewhere in the busy Mogadishu market scene. Click Start when you're ready to begin!
+    </p>
+    <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-extrabold py-3 px-8 sm:py-4 sm:px-10 rounded-2xl border-4 border-black text-xl sm:text-3xl shadow-2xl hover:scale-105 active:scale-95 transition duration-150 flex-shrink-0">
+      <i class="fa-solid fa-play mr-2"></i> START GAME
+    </button>
+  </div>
+</div>
   </main>
 
   <!-- Win Modal -->
