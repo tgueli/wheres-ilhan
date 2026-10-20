@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Where's Ilhan?</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@400;600;800&display=swap');
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: #121826;
+      color: #f3f4f6;
+      user-select: none;
+    }
+
+    .font-comic {
+      font-family: 'Bangers', cursive;
+      letter-spacing: 0.05em;
+    }
+
+    .comic-border {
+      border: 4px solid #000;
+      box-shadow: 6px 6px 0px #000;
+    }
+
+    .target-ring {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border: 4px dashed #ef4444;
+      background: rgba(239, 68, 68, 0.2);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: pulse-ring 1.5s infinite ease-in-out;
+    }
+
+    .miss-marker {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      color: #ef4444;
+      font-size: 2.5rem;
+      pointer-events: none;
+      animation: pop-out 0.8s forwards ease-out;
+    }
+
+    .found-ring {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border: 5px solid #10b981;
+      background: rgba(16, 185, 129, 0.35);
+      border-radius: 50%;
+      pointer-events: none;
+      box-shadow: 0 0 20px #10b981;
+      animation: scale-up 0.4s ease-out forwards;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.8; }
+    }
+
+    @keyframes pop-out {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes scale-up {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+  <!-- Header Section -->
+  <header class="bg-gradient-to-r from-red-600 via-purple-700 to-blue-600 p-4 shadow-xl border-b-4 border-black sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-4">
+      
+      <!-- Title -->
+      <div class="flex items-center space-x-3">
+        <h1 class="text-3xl sm:text-5xl font-comic text-yellow-300 tracking-wider drop-shadow-[0_3px_0_#000]">
+          WHERE'S ILHAN?
+        </h1>
+        <span class="bg-black text-xs font-bold text-white px-2 py-1 rounded uppercase tracking-widest border border-yellow-400">
+          Somalia Edition
+        </span>
+      </div>
+
+      <!-- Controls & Status -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <!-- Timer -->
+        <div class="bg-black/80 px-4 py-1.5 rounded-lg border-2 border-yellow-400 flex items-center space-x-2">
+          <i class="fa-solid fa-stopwatch text-yellow-400 text-lg"></i>
+          <span id="timer" class="font-mono text-xl sm:text-2xl text-yellow-300 font-bold">00:00.0</span>
+        </div>
+
+        <!-- Hint Button -->
+        <button id="hint-btn" onclick="toggleHint()" class="bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold px-3 py-1.5 rounded-lg border-2 border-black active:translate-y-0.5 transition shadow">
+          <i class="fa-solid fa-lightbulb"></i> <span class="hidden sm:inline">HINT</span>
+        </button>
+
+        <!-- Show Answer -->
+        <button id="answer-btn" onclick="toggleAnswer()" class="bg-red-500 hover:bg-red-400 text-white font-extrabold px-3 py-1.5 rounded-lg border-2 border-black active:translate-y-0.5 transition shadow">
+          <i class="fa-solid fa-eye"></i> <span class="hidden sm:inline">ANSWER</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Reference Banner -->
+  <div class="bg-slate-800 border-b border-slate-700 py-3 px-4 text-center text-sm font-semibold text-slate-300">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-bullseye text-yellow-400 text-base"></i>
+        <span>Search the crowded Somalia market to find Ilhan!</span>
+      </div>
+      <div class="flex items-center space-x-2 bg-slate-900 border border-slate-600 px-3 py-1 rounded-full">
+        <span class="text-xs uppercase text-slate-400 font-bold">Target Preview:</span>
+        <img src="https://i.ibb.co/bVvrnYJ/Gemini-Generated-Image-dbg5ltdbg5ltdbg5.jpg" alt="Ilhan Omar Reference" class="w-8 h-8 rounded-full object-cover border border-yellow-400">
+        <span class="text-xs font-bold text-yellow-300">Floral Headscarf &amp; Blazer</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Canvas Container -->
+  <main class="flex-1 flex items-center justify-center p-2 sm:p-6">
+    <div id="game-wrapper" class="relative max-w-5xl w-full comic-border rounded-xl overflow-hidden bg-slate-900 cursor-crosshair">
+      
+      <!-- Main Game Image -->
+      <img 
+        id="game-img" 
+        src="https://i.ibb.co/JWChVd7F/Gemini-Generated-Image-nf46urnf46urnf46.jpg" 
+        alt="Where's Ilhan Somalia Market" 
+        class="w-full h-auto block select-none"
+        draggable="false"
+      />
+
+      <!-- Overlay Elements Layer -->
+      <div id="overlay" class="absolute inset-0 pointer-events-none"></div>
+
+      <!-- Start Overlay Modal -->
+      <div id="start-overlay" class="absolute inset-0 bg-black/85 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-6 text-center">
+        <h2 class="text-4xl sm:text-6xl font-comic text-yellow-300 mb-4 drop-shadow-[0_4px_0_#000]">
+          CAN YOU FIND ILHAN?
+        </h2>
+        <div class="bg-slate-900 border-2 border-yellow-400 p-3 rounded-xl mb-6 flex items-center space-x-3">
+          <img src="https://i.ibb.co/bVvrnYJ/Gemini-Generated-Image-dbg5ltdbg5ltdbg5.jpg" alt="Target Reference" class="w-16 h-16 rounded-full border-2 border-yellow-400 object-cover">
+          <div class="text-left">
+            <span class="text-xs uppercase text-slate-400 font-bold block">Your Target</span>
+            <span class="text-sm font-bold text-yellow-300">Ilhan (Floral Scarf &amp; Dark Blazer)</span>
+          </div>
+        </div>
+        <p class="text-slate-300 text-lg max-w-md mb-8">
+          She is hidden somewhere in the busy Mogadishu market scene. Click Start when you're ready to begin!
+        </p>
+        <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-extrabold py-4 px-10 rounded-2xl border-4 border-black text-2xl sm:text-3xl shadow-2xl hover:scale-105 active:scale-95 transition duration-150">
+          <i class="fa-solid fa-play mr-2"></i> START GAME
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Win Modal -->
+  <div id="win-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border-4 border-yellow-400 rounded-2xl max-w-md w-full p-6 text-center comic-border relative">
+      <div class="text-yellow-400 text-6xl mb-2 animate-bounce">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+      <h2 class="text-4xl font-comic text-yellow-300 mb-2">YOU FOUND HER!</h2>
+      <p class="text-slate-300 text-lg mb-4">You spotted Ilhan in the Somalia market scene!</p>
+      
+      <div class="bg-slate-800 rounded-lg p-3 border border-slate-700 mb-6 inline-block w-full">
+        <span class="text-slate-400 uppercase text-xs font-bold block mb-1">Your Final Time</span>
+        <span id="final-time" class="font-mono text-3xl font-bold text-green-400">00:00.0</span>
+      </div>
+
+      <button onclick="restartGame()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-extrabold py-3 px-6 rounded-xl border-2 border-black text-xl shadow-lg transition">
+        PLAY AGAIN
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Audio Synthesizer via Web Audio API
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'hit') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      } else if (type === 'miss') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+      }
+    }
+
+    // Calibrated Target coordinates relative to image (X: 69.8%, Y: 62.8%)
+    const TARGET = { x: 69.8, y: 62.8, radius: 7.5 };
+
+    // Game State
+    let startTime = null;
+    let timerInterval = null;
+    let isGameStarted = false;
+    let isFound = false;
+    let showAnswer = false;
+    let showHint = false;
+    let elapsedTime = 0;
+
+    const img = document.getElementById('game-img');
+    const overlay = document.getElementById('overlay');
+    const timerEl = document.getElementById('timer');
+    const winModal = document.getElementById('win-modal');
+    const startOverlay = document.getElementById('start-overlay');
+
+    function startGame() {
+      startOverlay.classList.add('hidden');
+      isGameStarted = true;
+      startTimer();
+    }
+
+    // Start Stopwatch
+    function startTimer() {
+      startTime = Date.now() - elapsedTime;
+      timerInterval = setInterval(() => {
+        elapsedTime = Date.now() - startTime;
+        const totalSecs = elapsedTime / 1000;
+        const mins = Math.floor(totalSecs / 60);
+        const secs = Math.floor(totalSecs % 60);
+        const ms = Math.floor((totalSecs % 1) * 10);
+        timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${ms}`;
+      }, 100);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+    }
+
+    // Handle Clicks
+    img.addEventListener('click', (e) => {
+      if (!isGameStarted || isFound) return;
+
+      const rect = img.getBoundingClientRect();
+      const clickX = ((e.clientX - rect.left) / rect.width) * 100;
+      const clickY = ((e.clientY - rect.top) / rect.height) * 100;
+
+      // Distance formula to target
+      const dist = Math.hypot(clickX - TARGET.x, clickY - TARGET.y);
+
+      if (dist <= TARGET.radius) {
+        // HIT!
+        isFound = true;
+        stopTimer();
+        playSound('hit');
+        renderFoundMarker();
+        setTimeout(() => {
+          document.getElementById('final-time').textContent = timerEl.textContent;
+          winModal.classList.remove('hidden');
+        }, 600);
+      } else {
+        // MISS!
+        playSound('miss');
+        elapsedTime += 3000; // 3 sec penalty
+        renderMissMarker(clickX, clickY);
+      }
+    });
+
+    // Render Miss Ring / Icon
+    function renderMissMarker(x, y) {
+      const miss = document.createElement('div');
+      miss.className = 'miss-marker';
+      miss.style.left = `${x}%`;
+      miss.style.top = `${y}%`;
+      miss.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      overlay.appendChild(miss);
+      setTimeout(() => miss.remove(), 800);
+    }
+
+    // Render Win Marker
+    function renderFoundMarker() {
+      const found = document.createElement('div');
+      found.className = 'found-ring';
+      found.style.left = `${TARGET.x}%`;
+      found.style.top = `${TARGET.y}%`;
+      found.style.width = '70px';
+      found.style.height = '70px';
+      overlay.appendChild(found);
+    }
+
+    // Toggle Answer Outline
+    function toggleAnswer() {
+      if (!isGameStarted) return;
+      showAnswer = !showAnswer;
+      updateOverlays();
+    }
+
+    // Toggle Hint Quadrant Ring
+    function toggleHint() {
+      if (!isGameStarted) return;
+      showHint = !showHint;
+      updateOverlays();
+    }
+
+    function updateOverlays() {
+      overlay.querySelectorAll('.target-ring').forEach(el => el.remove());
+
+      if (showAnswer) {
+        const ring = document.createElement('div');
+        ring.className = 'target-ring';
+        ring.style.left = `${TARGET.x}%`;
+        ring.style.top = `${TARGET.y}%`;
+        ring.style.width = '70px';
+        ring.style.height = '70px';
+        overlay.appendChild(ring);
+      }
+
+      if (showHint) {
+        const hint = document.createElement('div');
+        hint.className = 'target-ring';
+        hint.style.borderColor = '#facc15';
+        hint.style.background = 'rgba(250, 204, 21, 0.15)';
+        hint.style.left = `${TARGET.x}%`;
+        hint.style.top = `${TARGET.y}%`;
+        hint.style.width = '180px';
+        hint.style.height = '180px';
+        overlay.appendChild(hint);
+      }
+    }
+
+    // Restart Game
+    function restartGame() {
+      isFound = false;
+      showAnswer = false;
+      showHint = false;
+      elapsedTime = 0;
+      overlay.innerHTML = '';
+      winModal.classList.add('hidden');
+      timerEl.textContent = '00:00.0';
+      startTimer();
+    }
+  </script>
+</body>
+</html>
