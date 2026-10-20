@@ -362,14 +362,29 @@
   </script>
   <script>
   function sendHeight() {
-    const height = document.documentElement.scrollHeight || document.body.scrollHeight;
-    window.parent.postMessage({ frameHeight: height }, '*');
+    // Measure exact content height
+    var height = Math.max(
+      document.body.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.clientHeight,
+      document.documentElement.scrollHeight,
+      document.documentElement.offsetHeight
+    );
+    if (height > 0) {
+      window.parent.postMessage({ type: 'ors-resize', frameHeight: height }, '*');
+    }
   }
 
+  // Trigger height send on all lifecycle events
   window.addEventListener('load', sendHeight);
   window.addEventListener('resize', sendHeight);
-  const observer = new MutationObserver(sendHeight);
-  observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+  document.addEventListener('DOMContentLoaded', sendHeight);
+
+  // Continuously observe changes inside the body
+  if (window.MutationObserver) {
+    var observer = new MutationObserver(sendHeight);
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+  }
 </script>
 </body>
 </html>
